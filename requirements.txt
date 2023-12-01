@@ -7,3 +7,9 @@ flake8
 autopep8
 lxml
 requests
+Flask
+gunicorn
+types-requests
+vcrpy
+pytest-mock
+Flask-WTF

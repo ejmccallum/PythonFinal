@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradebook</title>
+</head>
+<body>
+    <h1>Colorado Mesa Highschool Gradebook</h1>
+    <ul>
+        {% for subject in subjects %}
+            <li><a href="{{ url_for('subject_grades', subject=subject) }}">{{ subject }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
