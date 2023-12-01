@@ -39,6 +39,9 @@ RUN git clone https://github.com/Kattis/kattis-cli.git
 ENV PATH="${HOME}:${HOME}/.local/bin:${HOME}/kattis-cli:${PATH}"
 ENV KATTIS_CLI="${HOME}/kattis-cli"
 
+# install heroku-cli
+RUN curl https://cli-assets.heroku.com/install.sh | sh
+
 USER user
 
 CMD zsh

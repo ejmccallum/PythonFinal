@@ -1,0 +1,27 @@
+<!-- templates/subject_grades.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject }} Gradebook</title>
+</head>
+<body>
+    <h1>{{ subject }} Gradebook</h1>
+    <ul>
+        {% for record in data %}
+            <li>{{ record }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Button to go back to the subject details page -->
+    <a href="{{ url_for('subject_detail', subject=subject) }}">
+        <button>Add {{ subject }} Grade</button>
+    </a>
+
+    <!-- Button to go back to the homepage -->
+    <a href="{{ url_for('index') }}">
+        <button>Homepage</button>
+    </a>
+</body>
+</html>
