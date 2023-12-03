@@ -1,32 +1,42 @@
-<!-- templates/subject_detail.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add {{ subject }} Grade</title>
+    <title>{{ subject }} Gradebook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>{{ subject }} Gradebook</h1>
-    <a href="{{ url_for('subject_grades', subject=subject) }}">
-        <button>Back to {{ subject }} Grades</button>
-    </a>
+    <div class="container">
+        <h1>{{ subject }} Gradebook</h1>
+        <h2>Add New Entry</h2>
+        <form method="post" action="{{ url_for('add_entry', subject=subject) }}">
+            <label for="student">Student:</label>
+            <input type="text" name="student" required><br>
 
-    <h2>Add New Entry</h2>
-    <form method="post" action="{{ url_for('add_entry', subject=subject) }}">
-        <label for="student">Student:</label>
-        <input type="text" name="student" required><br>
+            <label for="assignment">Assignment:</label>
+            <input type="text" name="assignment" required><br>
 
-        <label for="assignment">Assignment:</label>
-        <input type="text" name="assignment" required><br>
+            <label for="grade">Grade:</label>
+            <input type="text" name="grade" required><br>
 
-        <label for="grade">Grade:</label>
-        <input type="text" name="grade" required><br>
+            <label for="teacher">Teacher:</label>
+            <input type="text" name="teacher" required><br>
 
-        <label for="teacher">Teacher:</label>
-        <input type="text" name="teacher" required><br>
+            <button type="submit">Add Entry</button>
+            <br>
+        </form>
 
-        <button type="submit">Add Entry</button>
-    </form>
+        <div class="button-group">
+            <a href="{{ url_for('subject_grades', subject=subject) }}">
+                <button>Back to {{ subject }} Grades</button>
+                <br><br>
+            </a>
+            <a href="{{ url_for('index') }}">
+                <button>Homepage</button>
+                <br>
+            </a>
+        </div>
+    </div>
 </body>
 </html>

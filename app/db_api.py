@@ -2,9 +2,9 @@
 MongoDB database APIs.
 """
 import copy
-from typing import Dict, List, Any
+from typing import Dict, Any
 import requests
-from . import settings
+import app.settings as settings
 
 
 def create_session() -> requests.Session:
@@ -36,5 +36,3 @@ def insert_one(Gradebook: Dict[str, Any]) -> 'requests.Response':
     payload['document'] = Gradebook
     response = session.post(action, json=payload)
     return response
-
-

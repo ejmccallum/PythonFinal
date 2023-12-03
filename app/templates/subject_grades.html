@@ -5,23 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ subject }} Gradebook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>{{ subject }} Gradebook</h1>
-    <ul>
-        {% for record in data %}
-            <li>{{ record }}</li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <h1>{{ subject }} Gradebook</h1>
 
-    <!-- Button to go back to the subject details page -->
-    <a href="{{ url_for('subject_detail', subject=subject) }}">
-        <button>Add {{ subject }} Grade</button>
-    </a>
+        <table border="1">
+            <tr>
+                <th>Student Name</th>
+                <th>Assignment Name</th>
+                <th>Grade</th>
+                <th>Professor Name</th>
+            </tr>
+            {% for record in data %}
+            <tr>
+                <td>{{ record.student_name }}</td>
+                <td>{{ record.assignment_name }}</td>
+                <td>{{ record.grade_value }}</td>
+                <td>{{ record.teacher_name }}</td>
+                <td>
+                    <form action="{{ url_for('delete_entry', subject=subject, entry_id=record._id) }}" method="post">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
 
-    <!-- Button to go back to the homepage -->
-    <a href="{{ url_for('index') }}">
-        <button>Homepage</button>
-    </a>
+        <div class="buttons">
+            <!-- Button to go back to the subject details page -->
+            <a href="{{ url_for('subject_detail', subject=subject) }}">
+                <button>Add {{ subject }} Grade</button>
+            </a>
+
+            <!-- Button to go back to the homepage -->
+            <a href="{{ url_for('index') }}">
+                <button>Homepage</button>
+            </a>
+        </div>
+    </div>
 </body>
 </html>
