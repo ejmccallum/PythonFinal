@@ -1,36 +1,44 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, Response
 from pymongo import MongoClient
+from bson.objectid import ObjectId
+from typing import Any, Dict
+from pymongo.collection import Collection
 
 app = Flask(__name__)
 
-mongo_client = MongoClient("mongodb+srv://ejmccallum:7ab9i8j39_FA%21i2@cluster0.xp3m8g3.mongodb.net/")
+mongo_client = MongoClient(
+    "mongodb+srv://ejmccallum:7ab9i8j39_FA%21i2@cluster0.xp3m8g3.mongodb.net/")
 db = mongo_client.Gradebook
 
 subjects = ["History", "Mathematics", "Literacy", "Science"]
 
+
 @app.route('/')
-def index():
+def index() -> Response:
     return render_template('index.html', subjects=subjects)
 
+
 @app.route('/<subject>/grades')
-def subject_grades(subject):
-    collection = db[subject]
+def subject_grades(subject: str) -> Response:
+    collection: Collection = db[subject]
     data = collection.find()
     return render_template('subject_grades.html', subject=subject, data=data)
 
+
 @app.route('/<subject>')
-def subject_detail(subject):
+def subject_detail(subject: str) -> Response:
     return render_template('subject_detail.html', subject=subject)
 
-@app.route('/<subject>/add', methods=['POST'])
-def add_entry(subject):
-    collection = db[subject]
-    student = request.form['student']
-    assignment = request.form['assignment']
-    grade = request.form['grade']
-    teacher = request.form['teacher']
 
-    entry = {
+@app.route('/<subject>/add', methods=['POST'])
+def add_entry(subject: str) -> Response:
+    collection: Collection = db[subject]
+    student: str = request.form['student']
+    assignment: str = request.form['assignment']
+    grade: str = request.form['grade']
+    teacher: str = request.form['teacher']
+
+    entry: Dict[str, Any] = {
         'student_name': student,
         'assignment_name': assignment,
         'grade_value': grade,
@@ -38,9 +46,15 @@ def add_entry(subject):
     }
 
     collection.insert_one(entry)
-    
-    # Use url_for to generate the correct URL for 'subject_grades'
     return redirect(url_for('subject_grades', subject=subject))
+
+
+@app.route('/<subject>/delete/<entry_id>', methods=['POST'])
+def delete_entry(subject: str, entry_id: str) -> Response:
+    collection: Collection = db[subject]
+    collection.delete_one({'_id': ObjectId(entry_id)})
+    return redirect(url_for('subject_grades', subject=subject))
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5555)

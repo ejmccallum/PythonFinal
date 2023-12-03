@@ -2,7 +2,10 @@
 Settings for the app.
 """
 
-END_POINT = 'https://us-west-2.aws.data.mongodb-api.com/app/data-vzvec/endpoint/data/v1'
+END_POINT = (
+    'https://us-west-2.aws.data.mongodb-api.com/'
+    'app/data-vzvec/endpoint/data/v1'
+)
 API_KEY = 'tjxJi07wQZp9QB1u6WUa463MJxvvSXqd0xNymUGFMvYaSTpLxvolHALGIQ76MTqh'
 DATA_SOURCE = 'Cluster0'
 DB_NAME = 'Gradebook'

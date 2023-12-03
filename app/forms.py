@@ -1,8 +1,8 @@
 """ This file contains the forms for the application. """
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, \
-    validators, TextAreaField, URLField
+from wtforms import StringField, \
+    validators
 
 
 class GradeEditForm(FlaskForm):  # type: ignore
