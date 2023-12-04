@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <h1>Colorado Mesa Highschool Gradebook</h1>
-        <div class="subject-list">
+        <div class = "row">
             {% for subject in subjects %}
                 <a class="subject-item" href="{{ url_for('subject_grades', subject=subject) }}">{{ subject }}</a>
             {% endfor %}
