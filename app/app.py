@@ -48,6 +48,7 @@ def add_entry(subject: str) -> Response:
     collection.insert_one(entry)
     return redirect(url_for('subject_grades', subject=subject))
 
+
 @app.route('/<subject>/edit/<entry_id>', methods=['GET', 'POST'])
 def edit_entry(subject: str, entry_id: str) -> Response:
     collection: Collection = db[subject]
@@ -61,12 +62,11 @@ def edit_entry(subject: str, entry_id: str) -> Response:
             'grade_value': request.form['grade'],
             'teacher_name': request.form['teacher']
         }
-
-        collection.update_one({'_id': ObjectId(entry_id)}, {'$set': updated_entry})
+        collection.update_one({'_id': ObjectId(entry_id)},
+                              {'$set': updated_entry})
         return redirect(url_for('subject_grades', subject=subject))
 
     return render_template('edit_entry.html', subject=subject, entry=entry)
-
 
 
 @app.route('/<subject>/delete/<entry_id>', methods=['POST'])
