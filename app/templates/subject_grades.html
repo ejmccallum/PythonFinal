@@ -17,6 +17,7 @@
                 <th>Assignment Name</th>
                 <th>Grade</th>
                 <th>Professor Name</th>
+                <th>Actions</th>
             </tr>
             {% for record in data %}
             <tr>
@@ -25,9 +26,16 @@
                 <td>{{ record.grade_value }}</td>
                 <td>{{ record.teacher_name }}</td>
                 <td>
-                    <form action="{{ url_for('delete_entry', subject=subject, entry_id=record._id) }}" method="post">
-                        <button type="submit">Delete</button>
+                    
+                    <a href="{{ url_for('edit_entry', subject=subject, entry_id=record._id) }}">
+                        <button type="submit" style="margin-top: 3px">Edit</button>
+                    </a>
+
+                    <form action="{{ url_for('delete_entry', subject=subject, entry_id=record._id) }}" 
+                    method="post" style="color:red">
+                        <button type="submit" style="margin-bottom: 3px">Delete</button>
                     </form>
+                    
                 </td>
             </tr>
             {% endfor %}

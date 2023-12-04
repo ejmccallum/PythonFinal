@@ -12,10 +12,11 @@ body {
 .container {
   width: 80%;
   max-width: 1200px; 
+  text-align: center;
   margin: auto; 
-  padding: 20px;
+  padding: 10px;
   background-color: white;
-  border-radius: 10px;
+  border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -25,10 +26,6 @@ h1, h2 {
   text-align: center;
 }
 
-.subject-list {
-  list-style: none;
-  padding: 0;
-}
 
 .subject-item {
   display: inline-block;
@@ -91,3 +88,8 @@ a {
   text-decoration: none;
 }
 
+.subject-list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

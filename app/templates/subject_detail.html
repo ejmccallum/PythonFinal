@@ -11,31 +11,47 @@
         <h1>{{ subject }} Gradebook</h1>
         <h2>Add New Entry</h2>
         <form method="post" action="{{ url_for('add_entry', subject=subject) }}">
-            <label for="student">Student:</label>
-            <input type="text" name="student" required><br>
+            <div class="row">
+                <div style="margin:10px">
+                    <label for="student">Student:</label>
+                    <input type="text" name="student" required><br>
+                </div>
 
-            <label for="assignment">Assignment:</label>
-            <input type="text" name="assignment" required><br>
+                <div style="margin:10px">
+                    <label for="assignment">Assignment:</label>
+                    <input type="text" name="assignment" required><br>
+                </div>
 
-            <label for="grade">Grade:</label>
-            <input type="text" name="grade" required><br>
+                <div style="margin:10px">
+                    <label for="grade">Grade:</label>
+                    <input type="text" name="grade" required><br>
+                </div>
 
-            <label for="teacher">Teacher:</label>
-            <input type="text" name="teacher" required><br>
+                <div style="margin:10px">
+                    <label for="teacher">Teacher:</label>
+                    <input type="text" name="teacher" required><br>
+                </div>
 
-            <button type="submit">Add Entry</button>
-            <br>
+                <div style="margin:10px">
+                    <button type="submit">Add Entry</button>
+                    <br>
+                </div>
+            </div>
         </form>
 
-        <div class="button-group">
-            <a href="{{ url_for('subject_grades', subject=subject) }}">
-                <button>Back to {{ subject }} Grades</button>
-                <br><br>
-            </a>
-            <a href="{{ url_for('index') }}">
-                <button>Homepage</button>
-                <br>
-            </a>
+
+        <div class="row" style="padding-top:10px">
+            <div class="button-group">
+
+                <a href="{{ url_for('subject_grades', subject=subject) }}">
+                    <button style="max-width:240px">Return to {{ subject }} Grades</button>
+                    <br><br>
+                </a>
+                <a href="{{ url_for('index') }}">
+                    <button style="max-width:240px">Return to Homepage</button>
+                    <br>
+                </a>
+            </div>
         </div>
     </div>
 </body>
