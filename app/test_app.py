@@ -1,26 +1,27 @@
 import unittest
-from app import app, get_mongo_client
+from app.app import app, get_mongo_client
+from typing import Optional
 
 
 class UITestCase(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.app = app.test_client()
-        self.app.testing = True
+        self.app.testing = True  # type: ignore
 
-    def test_index(self):
+    def test_index(self) -> None:
         response = self.app.get('/')
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Colorado Mesa Highschool Gradebook', response.data)
 
-    def test_subject_grades(self):
+    def test_subject_grades(self) -> None:
         subjects = ["History", "Mathematics", "Literacy", "Science"]
         for subject in subjects:
             response = self.app.get(f'/{subject}/grades')
             self.assertEqual(response.status_code, 200)
             self.assertIn(subject.encode(), response.data)
 
-    def test_subject_detail(self):
+    def test_subject_detail(self) -> None:
         subjects = ["History", "Mathematics", "Literacy", "Science"]
         for subject in subjects:
             response = self.app.get(f'/{subject}')
@@ -29,13 +30,13 @@ class UITestCase(unittest.TestCase):
 
 
 class APITestCase1(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.app = app.test_client()
-        self.app.testing = True
+        self.app.testing = True  # type: ignore
         self.subject = "History"
-        self.test_entry_id = None
+        self.test_entry_id: Optional[str] = None
 
-    def test_add_entry(self):
+    def test_add_entry(self) -> None:
         response = self.app.post(f'/{self.subject}/add', data=dict(
             student='John Doe',
             assignment='Essay',
@@ -47,11 +48,11 @@ class APITestCase1(unittest.TestCase):
 
         client = get_mongo_client().Gradebook
         collection = client[self.subject]
-        entry = collection.find_one({'student_name': 'John Doe',
-                                    'assignment_name': 'Essay'})
+        entry = collection.find_one(
+            {'student_name': 'John Doe', 'assignment_name': 'Essay'})
         self.test_entry_id = str(entry['_id'])
 
-    def test_edit_entry(self):
+    def test_edit_entry(self) -> None:
         self.test_add_entry()
 
         response = self.app.post(f'/{self.subject}/edit/{self.test_entry_id}',
@@ -67,23 +68,24 @@ class APITestCase1(unittest.TestCase):
         self.assertIn(b'B', response.data)
         self.assertIn(b'Updated Teacher', response.data)
 
-    def test_delete_entry(self):
+    def test_delete_entry(self) -> None:
         self.test_add_entry()
 
-        response = self.app.post(f'/{self.subject}/delete/{self.test_entry_id}'
-                                 , follow_redirects=True)
+        response = self.app.post(
+            f'/{self.subject}/delete/{self.test_entry_id}',
+            follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b'Existing Entry Data', response.data)
 
 
 class APITestCase2(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.app = app.test_client()
-        self.app.testing = True
+        self.app.testing = True  # type: ignore
         self.subject = "Literacy"
-        self.test_entry_id = None
+        self.test_entry_id: Optional[str] = None
 
-    def test_add_entry(self):
+    def test_add_entry(self) -> None:
         response = self.app.post(f'/{self.subject}/add', data=dict(
             student='Samantha Smith',
             assignment='Spelling Test',
@@ -93,15 +95,14 @@ class APITestCase2(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Samantha Smith', response.data)
 
-        # Extract the entry ID from the database using the database client
         client = get_mongo_client().Gradebook
         collection = client[self.subject]
-        entry = collection.find_one({'student_name': 'Samantha Smith',
-                                    'assignment_name': 'Spelling Test'})
+        entry = collection.find_one(
+            {'student_name': 'Samantha Smith',
+             'assignment_name': 'Spelling Test'})
         self.test_entry_id = str(entry['_id'])
 
-    def test_edit_entry(self):
-        # Run the test_add_entry method to create a test entry
+    def test_edit_entry(self) -> None:
         self.test_add_entry()
 
         response = self.app.post(f'/{self.subject}/edit/{self.test_entry_id}',
@@ -117,11 +118,12 @@ class APITestCase2(unittest.TestCase):
         self.assertIn(b'A', response.data)
         self.assertIn(b'Mr. Robert', response.data)
 
-    def test_delete_entry(self):
+    def test_delete_entry(self) -> None:
         self.test_add_entry()
 
-        response = self.app.post(f'/{self.subject}/delete/{self.test_entry_id}'
-                                 , follow_redirects=True)
+        response = self.app.post(
+            f'/{self.subject}/delete/{self.test_entry_id}',
+            follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b'Existing Entry Data', response.data)
 
