@@ -75,6 +75,9 @@ def delete_entry(subject: str, entry_id: str) -> Response:
     collection.delete_one({'_id': ObjectId(entry_id)})
     return redirect(url_for('subject_grades', subject=subject))
 
+def get_mongo_client():
+    return mongo_client
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5555)

@@ -1,6 +1,6 @@
 import unittest
-from app import app
-
+from app import app, get_mongo_client
+from pymongo.collection import Collection
 
 class UITestCase(unittest.TestCase):
 
@@ -28,7 +28,7 @@ class UITestCase(unittest.TestCase):
             self.assertIn(subject.encode(), response.data)
 
 
-class APITestCase(unittest.TestCase):
+class APITestCase1(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
@@ -45,11 +45,11 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'John Doe', response.data)
 
-        # Extract the entry ID from the response or query it from the database
-        entry_id_start = response.data.find(b'Entry ID: ') + len(b'Entry ID: ')
-        entry_id_end = response.data.find(b'</p>', entry_id_start)
-        self.test_entry_id = response.data[
-            entry_id_start:entry_id_end].decode()
+        # Extract the entry ID from the database using the database client
+        client = get_mongo_client().Gradebook
+        collection = client[self.subject]
+        entry = collection.find_one({'student_name': 'John Doe', 'assignment_name': 'Essay'})
+        self.test_entry_id = str(entry['_id'])
 
     def test_edit_entry(self):
         # Run the test_add_entry method to create a test entry
@@ -57,11 +57,11 @@ class APITestCase(unittest.TestCase):
 
         response = self.app.post(f'/{self.subject}/edit/{self.test_entry_id}',
                                  data=dict(
-                                    student='Updated Student',
-                                    assignment='Updated Assignment',
-                                    grade='B',
-                                    teacher='Updated Teacher'
-                                     ), follow_redirects=True)
+                                     student='Updated Student',
+                                     assignment='Updated Assignment',
+                                     grade='B',
+                                     teacher='Updated Teacher'
+                                 ), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Updated Student', response.data)
         self.assertIn(b'Updated Assignment', response.data)
@@ -69,14 +69,62 @@ class APITestCase(unittest.TestCase):
         self.assertIn(b'Updated Teacher', response.data)
 
     def test_delete_entry(self):
+        self.test_add_entry()
+
+        response = self.app.post(f'/{self.subject}/delete/{self.test_entry_id}',
+                                 follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b'Existing Entry Data', response.data)
+
+
+class APITestCase2(unittest.TestCase):
+    def setUp(self):
+        self.app = app.test_client()
+        self.app.testing = True
+        self.subject = "Literacy"
+        self.test_entry_id = None
+
+    def test_add_entry(self):
+        response = self.app.post(f'/{self.subject}/add', data=dict(
+            student='Samantha Smith',
+            assignment='Spelling Test',
+            grade='B',
+            teacher='Mr. Robert'
+        ), follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Samantha Smith', response.data)
+
+        # Extract the entry ID from the database using the database client
+        client = get_mongo_client().Gradebook
+        collection = client[self.subject]
+        entry = collection.find_one({'student_name': 'Samantha Smith', 'assignment_name': 'Spelling Test'})
+        self.test_entry_id = str(entry['_id'])
+
+    def test_edit_entry(self):
         # Run the test_add_entry method to create a test entry
         self.test_add_entry()
 
-        response = self.app.post(f'/{self.subject}/delete/{self.test_entry_id}'
-                                 , follow_redirects=True)
+        response = self.app.post(f'/{self.subject}/edit/{self.test_entry_id}',
+                                 data=dict(
+                                     student='Samantha Willimas',
+                                     assignment='Grammar Test',
+                                     grade='A',
+                                     teacher='Mr. Robert'
+                                 ), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn(b'Your Existing Entry Data', response.data)
+        self.assertIn(b'Samantha Willimas', response.data)
+        self.assertIn(b'Grammar Test', response.data)
+        self.assertIn(b'A', response.data)
+        self.assertIn(b'Mr. Robert', response.data)
 
+    def test_delete_entry(self):
+        self.test_add_entry()
+
+        response = self.app.post(f'/{self.subject}/delete/{self.test_entry_id}',
+                                 follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b'Existing Entry Data', response.data)
 
 if __name__ == '__main__':
     unittest.main()
+
