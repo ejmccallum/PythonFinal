@@ -6,8 +6,11 @@ from pymongo.collection import Collection
 
 app = Flask(__name__)
 
+# Connect to MongoDB Atlas with connection string
 mongo_client = MongoClient(
     "mongodb+srv://ejmccallum:7ab9i8j39_FA%21i2@cluster0.xp3m8g3.mongodb.net/")
+
+# Connect to database
 db = mongo_client.Gradebook
 
 subjects = ["History", "Mathematics", "Literacy", "Science"]
@@ -15,11 +18,17 @@ subjects = ["History", "Mathematics", "Literacy", "Science"]
 
 @app.route('/')
 def index() -> Response:
+    """
+    Method to display the index page
+    """
     return render_template('index.html', subjects=subjects)
 
 
 @app.route('/<subject>/grades')
 def subject_grades(subject: str) -> Response:
+    """
+    Method to display the grades for a given subject
+    """
     collection: Collection = db[subject]
     data = collection.find()
     return render_template('subject_grades.html', subject=subject, data=data)
@@ -27,11 +36,17 @@ def subject_grades(subject: str) -> Response:
 
 @app.route('/<subject>')
 def subject_detail(subject: str) -> Response:
+    """
+    Method to display the detail page to add an entry
+    """
     return render_template('subject_detail.html', subject=subject)
 
 
 @app.route('/<subject>/add', methods=['POST'])
 def add_entry(subject: str) -> Response:
+    """
+    Method to add an entry to the database
+    """
     collection: Collection = db[subject]
     student: str = request.form['student']
     assignment: str = request.form['assignment']
@@ -51,6 +66,9 @@ def add_entry(subject: str) -> Response:
 
 @app.route('/<subject>/edit/<entry_id>', methods=['GET', 'POST'])
 def edit_entry(subject: str, entry_id: str) -> Response:
+    """
+    Method to edit an entry in the database
+    """
     collection: Collection = db[subject]
     entry = collection.find_one({'_id': ObjectId(entry_id)})
 
@@ -71,11 +89,18 @@ def edit_entry(subject: str, entry_id: str) -> Response:
 
 @app.route('/<subject>/delete/<entry_id>', methods=['POST'])
 def delete_entry(subject: str, entry_id: str) -> Response:
+    """
+    Method to delete an entry from the database
+    """
     collection: Collection = db[subject]
     collection.delete_one({'_id': ObjectId(entry_id)})
     return redirect(url_for('subject_grades', subject=subject))
 
+
 def get_mongo_client():
+    """
+    Method to get the MongoDB client for testing
+    """
     return mongo_client
 
 

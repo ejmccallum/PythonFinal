@@ -1,6 +1,6 @@
 import unittest
 from app import app, get_mongo_client
-from pymongo.collection import Collection
+
 
 class UITestCase(unittest.TestCase):
 
@@ -45,14 +45,13 @@ class APITestCase1(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'John Doe', response.data)
 
-        # Extract the entry ID from the database using the database client
         client = get_mongo_client().Gradebook
         collection = client[self.subject]
-        entry = collection.find_one({'student_name': 'John Doe', 'assignment_name': 'Essay'})
+        entry = collection.find_one({'student_name': 'John Doe',
+                                    'assignment_name': 'Essay'})
         self.test_entry_id = str(entry['_id'])
 
     def test_edit_entry(self):
-        # Run the test_add_entry method to create a test entry
         self.test_add_entry()
 
         response = self.app.post(f'/{self.subject}/edit/{self.test_entry_id}',
@@ -71,8 +70,8 @@ class APITestCase1(unittest.TestCase):
     def test_delete_entry(self):
         self.test_add_entry()
 
-        response = self.app.post(f'/{self.subject}/delete/{self.test_entry_id}',
-                                 follow_redirects=True)
+        response = self.app.post(f'/{self.subject}/delete/{self.test_entry_id}'
+                                 , follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b'Existing Entry Data', response.data)
 
@@ -97,7 +96,8 @@ class APITestCase2(unittest.TestCase):
         # Extract the entry ID from the database using the database client
         client = get_mongo_client().Gradebook
         collection = client[self.subject]
-        entry = collection.find_one({'student_name': 'Samantha Smith', 'assignment_name': 'Spelling Test'})
+        entry = collection.find_one({'student_name': 'Samantha Smith',
+                                    'assignment_name': 'Spelling Test'})
         self.test_entry_id = str(entry['_id'])
 
     def test_edit_entry(self):
@@ -120,11 +120,11 @@ class APITestCase2(unittest.TestCase):
     def test_delete_entry(self):
         self.test_add_entry()
 
-        response = self.app.post(f'/{self.subject}/delete/{self.test_entry_id}',
-                                 follow_redirects=True)
+        response = self.app.post(f'/{self.subject}/delete/{self.test_entry_id}'
+                                 , follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(b'Existing Entry Data', response.data)
 
+
 if __name__ == '__main__':
     unittest.main()
-
